@@ -12,30 +12,17 @@ const typeDefs = gql`
   }
 `
 
-// Provide resolver functions for your schema fields
-const resolvers = {
-  ...setupGraphQLSubs()
-}
+// Resolvers initialized with pubsub for subscriptions
+const resolvers = setupResolvers()
 
-function setupGraphQLSubs() {
+function setupResolvers() {
   const pubsub = new PubSub()
-
-  const TOPIC = 'infoTopic'
-  const infos = ['info1', 'info2', 'info3', 'done']
-
-  const publish = () => {
-    infos.forEach((info, index) => {
-      setTimeout(() => {
-        console.log(`subscription sent ${info}`)
-        pubsub.publish(TOPIC, { info })
-      }, 1000 * index)
-    })
-  }
-
+  const TOPIC = 'topic'
   return {
     Query: {
       go: () => {
-        publish()
+        // pubsub.publish(triggerName, payload)
+        pubsub.publish(TOPIC, { info: 'Hello world!' })
         return 'going'
       }
     },
@@ -49,7 +36,6 @@ function setupGraphQLSubs() {
 }
 
 function setupGraphQL() {
-  const resolvers = setupGraphQLSubs()
   return new ApolloServer({
     typeDefs,
     resolvers
@@ -62,10 +48,7 @@ function setupExpress() {
 
   // graphQL
   const server = setupGraphQL()
-  server.applyMiddleware({
-    app,
-    path: '/graphql'
-  })
+  server.applyMiddleware({ app })
 
   const httpServer = http.createServer(app)
   server.installSubscriptionHandlers(httpServer)
