@@ -2,6 +2,8 @@
 
 Basic subscriptions implementation with Apollo 2 and Express for learning purposes.
 
+## :rocket: `npm run start`
+
 ## Subscribe
 
 Open [localhost:4000/graphql](http://localhost:4000/graphql), paste the subscription below and hit run.
